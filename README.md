@@ -119,16 +119,36 @@ billionaire charts check skr-03 2026
 Both run the parser package in the repository's uv workspace; the installed
 CLI outside a checkout answers that the documents are in the repository.
 
-What becomes of each account from one edition to the next is derived from
-the editions' files and checked in as a lock
-(`libs/billionaire/charts/README.md`, "Succession"):
+What follows from the editions' files is derived and checked in as a lock
+(`libs/billionaire/charts/README.md`, "Succession" and "Mappings"): what
+becomes of each account from one edition to the next, the counterpart of
+each account on the other chart line, its place in each taxonomy edition,
+and the rules its booking role stands for. A change of an account in
+`meaning.json` ends with `lock`, and the diff of the locks is part of it:
 
 ```sh
-# Write every succession lock and each chart line's CHANGES.md.
+# Write every lock and each chart line's CHANGES.md.
 billionaire charts lock
 
 # Exit 1 unless every checked-in lock is exactly what the derivation gives.
 billionaire charts lock --check
+```
+
+The chart data is sealed by the owner (`libs/billionaire/charts/README.md`,
+"The seal"): every file of the editions has its hash in `seal.json`, signed
+with a key whose passphrase only the owner knows. A change of the chart
+data — and of the locks that follow from it — waits for that seal:
+
+```sh
+# Exit 1 unless every file of the chart data is what the owner sealed.
+# Needs no key.
+billionaire charts seal --check
+
+# The owner's: show what changed since the last seal — data as a table
+# (account, field, was, is), locks as pairs of lines — then sign.
+# ssh-keygen asks for the passphrase of the sealing key on the terminal.
+billionaire charts seal
+billionaire charts seal --key ~/.ssh/billionaire_chart_seal   # the default
 ```
 
 A number answers with one of:
@@ -145,6 +165,10 @@ A number answers with one of:
 The charts are inlined at build time from the ONE place the platform keeps
 them — the library `libs/billionaire/charts` (`editions/<provider>/<chart>/<edition>/`: what the source prints and what
 we decide, beside the source PDFs), taken from the DATEV Kontenrahmen named in
-each file's `edition`. The app's database (account templates, account
-rules, taxonomy positions) is seeded from the same files. The CLI holds no
-copy and no number of its own.
+each file's `edition`. The CLI holds no copy and no number of its own.
+
+The CLI has no database and no network, so it loads none: a database is
+loaded from the same files by the app, which holds the connection
+(`apps/billionaire/billionaire/scripts/typescript/apply-chart-edition.ts`),
+and held equal to them by `check-chart-editions-against-database.ts` —
+`libs/billionaire/charts/README.md`, "Loading an edition into a database".
