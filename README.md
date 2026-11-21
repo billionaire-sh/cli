@@ -42,6 +42,29 @@ pnpm i -g @billionaire-sh/cli
 
 ---
 
+## From the checkout: always the code as it stands
+
+Homebrew and npm install a build, and a build is behind the checkout: a
+command added today is not in the binary of last week. Whoever works in the
+repository links the starter into a folder of the `PATH` once:
+
+```sh
+ln -s ~/Projects/kadal/apps/billionaire/cli/bin/billionaire.mjs /opt/homebrew/bin/billionaire
+billionaire --version
+```
+
+From then on `billionaire` runs `src/cli.ts` of that checkout — no build,
+no release, nothing to upgrade. It needs the checkout installed
+(`pnpm install`) and nothing else. The commands that work on the files of
+the chart editions (`charts lock`, `charts seal`, `charts parse`,
+`charts check`) look at the folder you call them from, so call them inside
+the checkout whose files you mean.
+
+The starter is three lines (`bin/billionaire.mjs`); the mechanism is
+`@kolaveri/dev-tools/cli-from-source`, shared with the `order3000` CLI.
+
+---
+
 ## Shell completion (tab autocomplete)
 
 `billionaire completion <shell>` prints a completion script for your
@@ -123,7 +146,7 @@ What follows from the editions' files is derived and checked in as a lock
 (`libs/billionaire/charts/README.md`, "Succession" and "Mappings"): what
 becomes of each account from one edition to the next, the counterpart of
 each account on the other chart line, its place in each taxonomy edition,
-and the rules its booking role stands for. A change of an account in
+and the rules its purposes stand for. A change of an account in
 `meaning.json` ends with `lock`, and the diff of the locks is part of it:
 
 ```sh
@@ -147,15 +170,15 @@ billionaire charts seal --check
 # The owner's: show what changed since the last seal — data as a table
 # (account, field, was, is), locks as pairs of lines — then sign.
 # ssh-keygen asks for the passphrase of the sealing key on the terminal.
-billionaire charts seal
-billionaire charts seal --key ~/.ssh/billionaire_chart_seal   # the default
+billionaire charts seal                          # the key at ~/.ssh/billionaire/chart_seal
+billionaire charts seal --key /path/to/key       # a key file somewhere else
 ```
 
 A number answers with one of:
 
 | `status` | Meaning |
 |---|---|
-| `account` | The chart keeps an active account there — the only answer that may be booked on. Comes with name, account type, booking role and taxonomy position. |
+| `account` | The chart keeps an active account there — the only answer that may be booked on. Comes with name, account type, the booking purposes it answers (with their conditions) and taxonomy position. |
 | `inactive` | The platform keeps the account, but it is no longer booked on. |
 | `reserved` | DATEV reserves the number (with the block and the page of the publication). Not an account. |
 | `unknown` | The chart does not know the number. An account of an entity's own may take it. |
