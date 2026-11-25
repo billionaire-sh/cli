@@ -170,8 +170,14 @@ billionaire charts seal --check
 # The owner's: show what changed since the last seal — data as a table
 # (account, field, was, is), locks as pairs of lines — then sign.
 # ssh-keygen asks for the passphrase of the sealing key on the terminal.
+# A seal that verifies writes its changeset (.changeset/chart-seal-…md).
 billionaire charts seal                          # the key at ~/.ssh/billionaire/chart_seal
 billionaire charts seal --key /path/to/key       # a key file somewhere else
+billionaire charts seal --refs BLNR-1937         # stories the changeset names beside the ones git gives
+
+# The changeset of the seal that stands, for a seal made without one.
+# Signs nothing, needs no key.
+billionaire charts seal --changeset [--refs BLNR-1937,BLNR-1943]
 ```
 
 A number answers with one of:
